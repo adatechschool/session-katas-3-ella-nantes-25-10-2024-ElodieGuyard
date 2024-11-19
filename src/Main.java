@@ -8,7 +8,6 @@ import java.io.IOException; //import de la classe IOException
 
 public class Main {
     public static void main(String[] args) {
-
         JSONRangeur();                                  //Appel de la méthode JSONRangeur qui permet de creer un objet pokemon par itération
         System.out.println(CompterLespokemons());       //print la valeur de retour de la méthode CompterLespokemons
     }
@@ -33,16 +32,22 @@ public class Main {
         String nomPkm;
         String numPkm;
         String typePkm;
+        Double poidsPkm;
 
         for (int i = 0; i < AllPokemons.size(); i++) {
             JSONObject currentPokemon = (JSONObject) AllPokemons.get(i); // l'objet JSON est égale aux paires clés / valeurs présents à l'endroit i
             nomPkm = (String) currentPokemon.get("name"); //à l'endroit i du JSONArray, prendre la valeur de la clé "name" qui est de type string
             numPkm = currentPokemon.get("num").toString(); //à l'endroit i du JSONArray; prendre la valeur de la clé "num" convertie en string
-            typePkm = currentPokemon.get("type").toString(); // à l'endroit i du JSONArray, prendre la valeur de la clé type (de type Array) convertie en string
+            typePkm = currentPokemon.get("type").toString(); // à l'endroit i du JSONArray, prendre la valeur de la clé "type" (de type Array) convertie en string
 
-            Pokemon monPokemon = new Pokemon(numPkm,nomPkm,typePkm); //création d'un pokemon grâce à l'objet pokemon
-            System.out.println("Pokémon numéro = " + monPokemon.num + " | Nom = " + monPokemon.nom + " | Type = " + monPokemon.type); //utilisation de l'object créé pour print dans la console les informations qu'on a pu récupérer
-            //note : monPokemon est écrasé à chaque itération.
+            //traiter weight qui est un mélange de chaine de caractère et de nombre à virgule :
+            String weightBrut = currentPokemon.get("weight").toString();
+            poidsPkm = convertPoidsPkm(weightBrut);
+            System.out.println(poidsPkm);
+
+            Pokemon monPokemon = new Pokemon(numPkm,nomPkm,typePkm, poidsPkm); //création d'un pokemon grâce à l'objet pokemon
+            System.out.println("Pokémon numéro = " + monPokemon.num + " | Nom = " + monPokemon.nom + " | Type = " + monPokemon.type + "| poids = " + monPokemon.weight); //utilisation de l'object créé pour print dans la console les informations qu'on a pu récupérer
+            //note : monPokemon est écrasé à chaque itération -> stocker dans une arraylist mon pokemon pour pouvoir faire des trucs après
         }
     }
 
@@ -52,4 +57,13 @@ public class Main {
         nbPokemon = AllPokemons.size();                             //nbPokemon stocke la taille du tableau où il y a tout les pokemons
         return "Il y a : " + nbPokemon + " pokémons dans la liste";
     }
+
+    public static Double convertPoidsPkm(String poidsStr){
+        Double poids;
+        String weight = poidsStr.replace(" kg","");
+        poids = Double.valueOf((String) weight); //peut throw des exceptions !!!! les gérer ce serai pas mal
+    return poids;
+    }
 }
+//Quels sont ceux dont le poids est supérieur à 10 kg ?
+//Ecrire une fonction qui permet de les classer par ordre croissant de poids et afficher le résultat.
